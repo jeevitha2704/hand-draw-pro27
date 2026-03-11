@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hand Draw Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/style.css?v=3" />
+</head>
+<body>
+
+  <!-- ═══════════════════ LOADING SCREEN ═══════════════════ -->
+  <div id="loader">
+    <div class="loader-inner">
+      <div class="loader-icon">
+        <img src="/static/logo.png" alt="Hand Draw Pro" class="loader-logo-img">
+      </div>
+      <h1>HAND DRAW <span>PRO</span></h1>
+      <p class="loader-sub">INITIALISING HAND TRACKING ENGINE</p>
+      <div class="loader-bar"><div id="loader-fill"></div></div>
+      <p id="loader-status">Connecting to camera…</p>
+    </div>
+    <div class="loader-grid"></div>
+  </div>
+
+  <!-- ═══════════════════ APP SHELL ════════════════════════ -->
+  <div id="app" class="hidden">
+
+    <!-- Top bar -->
+    <header id="topbar">
+      <div class="brand">
+        <img src="/static/logo.png" alt="Hand Draw Pro" class="brand-logo-img">
+        <span class="brand-name">HAND DRAW <em>PRO</em></span>
+      </div>
+
+      <div class="mode-pill" id="mode-pill">
+        <span class="mode-dot" id="mode-dot"></span>
+        <span id="mode-label">SHOW YOUR HAND</span>
+      </div>
+
+      <nav class="toolbar">
+        <!-- Line type options -->
+        <div class="line-type-group" id="line-types">
+          <button class="line-type active" data-line="normal" title="Normal drawing">
+            <svg width="16" height="16" viewBox="0 0 16 16">
+              <path d="M2 8 Q8 2, 14 8" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>
+          </button>
+          <button class="line-type" data-line="straight" title="Straight line">
+            <svg width="16" height="16" viewBox="0 0 16 16">
+              <line x1="2" y1="14" x2="14" y2="2" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </button>
+          <button class="line-type" data-line="dashed" title="Dashed line">
+            <svg width="16" height="16" viewBox="0 0 16 16">
+              <line x1="2" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="2" stroke-dasharray="3,2"/>
+            </svg>
+          </button>
+          <button class="line-type" data-line="dotted" title="Dotted line">
+            <svg width="16" height="16" viewBox="0 0 16 16">
+              <line x1="2" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="2" stroke-dasharray="1,2"/>
+            </svg>
+          </button>
+          <button class="line-type" data-line="double" title="Double line">
+            <svg width="16" height="16" viewBox="0 0 16 16">
+              <line x1="2" y1="6" x2="14" y2="6" stroke="currentColor" stroke-width="1.5"/>
+              <line x1="2" y1="10" x2="14" y2="10" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Color swatches -->
+        <div class="swatch-group" id="swatches">
+          <button class="swatch active" data-color="#00f5ff" style="--c:#00f5ff" title="Cyan"></button>
+          <button class="swatch" data-color="#bf00ff" style="--c:#bf00ff" title="Violet"></button>
+          <button class="swatch" data-color="#ff2d78" style="--c:#ff2d78" title="Pink"></button>
+          <button class="swatch" data-color="#00ff9d" style="--c:#00ff9d" title="Mint"></button>
+          <button class="swatch" data-color="#ffdd00" style="--c:#ffdd00" title="Yellow"></button>
+          <button class="swatch" data-color="#ff6a00" style="--c:#ff6a00" title="Orange"></button>
+          <button class="swatch rainbow" data-color="rainbow" title="Rainbow"></button>
+        </div>
+
+        <!-- Brush size -->
+        <div class="slider-wrap" title="Brush size">
+          <svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="3" fill="currentColor"/></svg>
+          <input type="range" id="brush-size" min="2" max="24" value="5" />
+          <svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="currentColor"/></svg>
+        </div>
+
+        <div class="divider"></div>
+
+        <button class="icon-btn" id="undo-btn" title="Undo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10h10c4 0 7 3 7 7v1"/><path d="M3 10l5-5M3 10l5 5"/></svg>
+        </button>
+        <button class="icon-btn danger" id="clear-btn" title="Clear all">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+        </button>
+      </nav>
+    </header>
+
+    <!-- Main canvas area -->
+    <main id="stage">
+      <canvas id="draw-canvas"></canvas>
+      <canvas id="fx-canvas"></canvas>   <!-- particles / erase ring -->
+      <div id="sel-ring"></div>
+      <div id="finger-cursor"></div>
+    </main>
+
+    <!-- Gesture guide panel -->
+    <aside id="guide-panel">
+      <p class="guide-title">GESTURES</p>
+      <div class="guide-item" data-gesture="draw">
+        <div class="guide-emoji">☝️</div>
+        <div class="guide-text">
+          <strong>INDEX ONLY</strong>
+          <span>Draw</span>
+        </div>
+      </div>
+      <div class="guide-item" data-gesture="pinch">
+        <div class="guide-emoji">🤌</div>
+        <div class="guide-text">
+          <strong>PINCH</strong>
+          <span>Move shape</span>
+        </div>
+      </div>
+      <div class="guide-item" data-gesture="erase">
+        <div class="guide-emoji">✌️</div>
+        <div class="guide-text">
+          <strong>INDEX + MIDDLE</strong>
+          <span>Erase</span>
+        </div>
+      </div>
+      <div class="guide-item" data-gesture="idle">
+        <div class="guide-emoji">🖐️</div>
+        <div class="guide-text">
+          <strong>OPEN PALM</strong>
+          <span>Idle / Nothing</span>
+        </div>
+      </div>
+
+      <div class="cam-wrap">
+        <img id="cam-feed" src="/video_feed" alt="Camera" />
+        <div class="cam-label">LIVE FEED</div>
+      </div>
+    </aside>
+
+  </div><!-- /app -->
+
+  <script src="/static/js/particles.js?v=2"></script>
+  <script src="/static/js/canvas.js?v=2"></script>
+  <script src="/static/js/gestures.js?v=2"></script>
+  <script src="/static/js/main.js?v=2"></script>
+</body>
+</html>
