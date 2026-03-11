@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hand Draw Pro - Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <!-- ═══════════════════ LOADING SCREEN ═══════════════════ -->
+  <div id="loader">
+    <div class="loader-inner">
+      <div class="loader-icon">
+        <img src="/logo.png" alt="Hand Draw Pro" class="loader-logo-img">
+      </div>
+      <h1>HAND DRAW <span>PRO</span></h1>
+      <p class="loader-sub">DEMO MODE - SERVERLESS DEPLOYMENT</p>
+      <div class="loader-bar"><div id="loader-fill"></div></div>
+      <p id="loader-status">Loading demo interface...</p>
+    </div>
+    <div class="loader-grid"></div>
+  </div>
+
+  <!-- ═══════════════════ APP SHELL ════════════════════════ -->
+  <div id="app" class="hidden">
+    <!-- Top bar -->
+    <header id="topbar">
+      <div class="brand">
+        <img src="/logo.png" alt="Hand Draw Pro" class="brand-logo-img">
+        <span class="brand-name">HAND DRAW <em>PRO</em></span>
+      </div>
+
+      <div class="mode-pill" id="mode-pill">
+        <span class="mode-dot" id="mode-dot"></span>
+        <span id="mode-label">DEMO MODE</span>
+      </div>
+
+      <nav class="toolbar">
+        <!-- Line type options -->
+        <div class="line-type-group" id="line-types">
+          <button class="line-type active" data-line="normal" title="Normal drawing">
+            <svg width="16" height="16" viewBox="0 0 16 16">
+              <path d="M2 8 Q8 2, 14 8" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>
+          </button>
+          <button class="line-type" data-line="straight" title="Straight line">
+            <svg width="16" height="16" viewBox="0 0 16 16">
+              <line x1="2" y1="14" x2="14" y2="2" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </button>
+          <button class="line-type" data-line="dashed" title="Dashed line">
+            <svg width="16" height="16" viewBox="0 0 16 16">
+              <line x1="2" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="2" stroke-dasharray="3,2"/>
+            </svg>
+          </button>
+          <button class="line-type" data-line="dotted" title="Dotted line">
+            <svg width="16" height="16" viewBox="0 0 16 16">
+              <line x1="2" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="2" stroke-dasharray="1,2"/>
+            </svg>
+          </button>
+          <button class="line-type" data-line="double" title="Double line">
+            <svg width="16" height="16" viewBox="0 0 16 16">
+              <line x1="2" y1="6" x2="14" y2="6" stroke="currentColor" stroke-width="1.5"/>
+              <line x1="2" y1="10" x2="14" y2="10" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Color swatches -->
+        <div class="swatch-group" id="swatches">
+          <button class="swatch active" data-color="#00f5ff" style="background:#00f5ff"></button>
+          <button class="swatch" data-color="#bf00ff" style="background:#bf00ff"></button>
+          <button class="swatch" data-color="#ff2d78" style="background:#ff2d78"></button>
+          <button class="swatch" data-color="#ffeb3b" style="background:#ffeb3b"></button>
+          <button class="swatch" data-color="#4caf50" style="background:#4caf50"></button>
+          <button class="swatch" data-color="#ff5722" style="background:#ff5722"></button>
+        </div>
+
+        <!-- Brush size -->
+        <div class="brush-size">
+          <input type="range" id="brush-size" min="2" max="30" value="4">
+          <span class="size-label">4</span>
+        </div>
+
+        <!-- Action buttons -->
+        <button class="btn" id="undo-btn" title="Undo">↶</button>
+        <button class="btn" id="clear-btn" title="Clear all">✕</button>
+      </nav>
+    </header>
+
+    <!-- Main canvas -->
+    <main id="canvas-container">
+      <canvas id="draw-canvas"></canvas>
+      <canvas id="fx-canvas"></canvas>
+      <div id="cursor" class="hidden"></div>
+    </main>
+
+    <!-- Gesture guide -->
+    <aside id="guide-panel" class="guide">
+      <h3>🎮 GESTURE GUIDE</h3>
+      <div class="gesture-list">
+        <div class="gesture-item">
+          <span class="gesture-icon">☝️</span>
+          <div class="gesture-desc">
+            <strong>Draw</strong>
+            <small>Index finger only</small>
+          </div>
+        </div>
+        <div class="gesture-item">
+          <span class="gesture-icon">🤌</span>
+          <div class="gesture-desc">
+            <strong>Move</strong>
+            <small>Index + thumb pinch</small>
+          </div>
+        </div>
+        <div class="gesture-item">
+          <span class="gesture-icon">✌️</span>
+          <div class="gesture-desc">
+            <strong>Erase</strong>
+            <small>Index + middle fingers</small>
+          </div>
+        </div>
+        <div class="gesture-item">
+          <span class="gesture-icon">🖐️</span>
+          <div class="gesture-desc">
+            <strong>Idle</strong>
+            <small>Open palm</small>
+          </div>
+        </div>
+      </div>
+      <div class="demo-notice">
+        <p><strong>⚠️ Demo Mode</strong></p>
+        <p>Full hand tracking requires server deployment. This is a static demo.</p>
+        <p>Deploy to Heroku, DigitalOcean, or AWS for full functionality.</p>
+      </div>
+    </aside>
+  </div>
+
+  <script src="/particles.js"></script>
+  <script src="/canvas.js"></script>
+  <script src="/demo.js"></script>
+</body>
+</html>
