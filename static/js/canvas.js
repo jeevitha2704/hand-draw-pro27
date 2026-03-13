@@ -146,6 +146,14 @@ class DrawingEngine {
     this.lineType = type;
   }
 
+  setColor(color) {
+    this.color = color;
+  }
+
+  setBrushSize(size) {
+    this.brushSize = size;
+  }
+
   // ── Draw ─────────────────────────────────────────────────
   beginStroke() {
     this.currentStroke = { points: [], color: this.getColor(), size: this.brushSize, lineType: this.lineType };

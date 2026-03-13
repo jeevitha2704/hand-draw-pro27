@@ -4,22 +4,15 @@
  */
 
 class GestureHandler {
-  constructor(engine, uiController) {
+  constructor(engine, ui) {
     this.engine = engine;
-    this.ui     = uiController;
-
+    this.ui = ui;
+    this.drawActive = false;
+    this._gapTimer = null;
+    
     // Smooth finger position
     this.sx = null; this.sy = null;
     this.ALPHA = 0.15; // More responsive smoothing
-
-    // Move state
-    this.selectedIdx  = -1;
-    this.movePrevX    = null;
-    this.movePrevY    = null;
-    this.pinchActive  = false;
-
-    // Draw state
-    this.drawActive = false;
 
     this._connectSSE();
   }

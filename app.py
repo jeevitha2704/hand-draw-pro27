@@ -25,10 +25,12 @@ options = HandLandmarkerOptions(
     base_options=BaseOptions(model_asset_path='hand_landmarker.task'),
     running_mode=VisionRunningMode.IMAGE,
     num_hands=1,
-    min_hand_detection_confidence=0.3,
-    min_hand_presence_confidence=0.3,
-    min_tracking_confidence=0.3
+    min_hand_detection_confidence=0.1,  # Lowered from 0.3
+    min_hand_presence_confidence=0.1,   # Lowered from 0.3
+    min_tracking_confidence=0.1         # Lowered from 0.3
 )
+
+print("Initializing MediaPipe hand landmarker...")
 hand_landmarker = HandLandmarker.create_from_options(options)
 
 gesture_detector = GestureDetector()
@@ -51,8 +53,13 @@ frame_lock   = threading.Lock()
 
 # ── Camera capture thread ────────────────────────────────────────
 def capture_loop():
-    global latest_frame
+    global latest_frame, latest_data
     cap = cv2.VideoCapture(0)
+    if not cap.isOpened():
+        print("ERROR: Could not open camera")
+        return
+    
+    print("Camera opened successfully")
     cap.set(cv2.CAP_PROP_FRAME_WIDTH,  640)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
     cap.set(cv2.CAP_PROP_FPS, 60)
@@ -103,10 +110,11 @@ def capture_loop():
             for landmark in lm_list:
                 x = int(landmark.x * frame.shape[1])
                 y = int(landmark.y * frame.shape[0])
-                cv2.circle(frame, (x, y), 3, (0, 255, 0), -1)
+                cv2.circle(frame, (x, y), 3, (255, 255, 255), -1)  # White color
+                cv2.circle(frame, (x, y), 5, (192, 192, 192), 1)    # Silver outline
 
         with state_lock:
-            latest_data.update(data)
+            latest_data = data  # Replace entire data object
 
         # Encode preview frame
         small = cv2.resize(frame, (320, 240))
