@@ -8,6 +8,33 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/style.css" />
+  <!-- ✅ PASTE THIS INSIDE YOUR <head> TAG in templates/index.html or public/index.html -->
+
+<!-- PWA Manifest -->
+<link rel="manifest" href="/manifest.json">
+
+<!-- Theme color (browser UI bar color on Android) -->
+<meta name="theme-color" content="#00ffcc">
+
+<!-- iOS PWA support -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Hand Draw Pro">
+<link rel="apple-touch-icon" href="/logo.png">
+
+<!-- Android / Chrome PWA support -->
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- Service Worker Registration -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('SW registered:', reg.scope))
+        .catch(err => console.warn('SW failed:', err));
+    });
+  }
+</script>
 </head>
 <body>
   <!-- ═══════════════════ LOADING SCREEN ═══════════════════ -->
